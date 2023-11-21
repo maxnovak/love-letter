@@ -19,7 +19,16 @@ func _ready():
 	randomize()
 	create_deck()
 	deck.shuffle()
-	
+	deal_cards()
+
+func create_deck():
+	for cardType in cardBreakdown:
+		for i in cardBreakdown[cardType].count:
+			var card := CardScene.instantiate()
+			card.setup(cardBreakdown[cardType].cardName)
+			deck.append(card)
+
+func deal_cards():
 	var playersCard = deck[0]
 	$PlayersHand.add_child(playersCard)
 	
@@ -29,10 +38,3 @@ func _ready():
 	
 	for card in $PlayersHand.get_children():
 		card.hover_over_card.connect($PlayersHand._on_Card_hover_over_card.bind(card))
-
-func create_deck():
-	for cardType in cardBreakdown:
-		for i in cardBreakdown[cardType].count:
-			var card := CardScene.instantiate()
-			card.setup(cardBreakdown[cardType].cardName)
-			deck.append(card)
