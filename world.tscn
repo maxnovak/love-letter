@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://bmae37f4bd0sv"]
+
+[ext_resource type="Script" path="res://world.gd" id="1_oaox4"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cde1s"]
+size = Vector2(351.5, 114.25)
+
+[node name="Table" type="Node2D"]
+script = ExtResource("1_oaox4")
+
+[node name="PlayersHand" type="Node2D" parent="."]
+position = Vector2(602, 589)
+
+[node name="HandArea" type="Area2D" parent="PlayersHand"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayersHand/HandArea"]
+shape = SubResource("RectangleShape2D_cde1s")
+
+[connection signal="mouse_entered" from="PlayersHand/HandArea" to="." method="_on_hand_mouse_entered"]
+[connection signal="mouse_exited" from="PlayersHand/HandArea" to="." method="_on_hand_mouse_exited"]

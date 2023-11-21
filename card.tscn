@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://b2mlqh0nbkhqc"]
+
+[ext_resource type="Script" path="res://Card.gd" id="1_gv1ut"]
+
+[node name="Card" type="Node2D"]
+scale = Vector2(3, 3)
+script = ExtResource("1_gv1ut")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
