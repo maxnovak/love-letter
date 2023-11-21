@@ -21,10 +21,14 @@ func _ready():
 	deck.shuffle()
 	
 	var playersCard = deck[0]
-	var playersHand = get_tree().get_root().get_node("Table/PlayersHand")
+	$PlayersHand.add_child(playersCard)
 	
-	playersHand.add_child(playersCard)
+	var playersCard2 = deck[1]
+	playersCard2.position = Vector2(100,0)
+	$PlayersHand.add_child(playersCard2)
 	
+	for card in $PlayersHand.get_children():
+		card.hover_over_card.connect($PlayersHand._on_Card_hover_over_card.bind(card))
 
 func create_deck():
 	for cardType in cardBreakdown:
@@ -32,14 +36,3 @@ func create_deck():
 			var card := CardScene.instantiate()
 			card.setup(cardBreakdown[cardType].cardName)
 			deck.append(card)
-
-
-
-func _on_hand_mouse_entered():
-	var playersHand = get_tree().get_root().get_node("Table/PlayersHand")
-	playersHand.scale = Vector2(1.5, 1.5)
-
-
-func _on_hand_mouse_exited():
-	var playersHand = get_tree().get_root().get_node("Table/PlayersHand")
-	playersHand.scale = Vector2(1, 1)
