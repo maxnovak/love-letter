@@ -7,5 +7,5 @@
 script = ExtResource("1_p1sh2")
 
 [node name="PlayersHand" type="Node2D" parent="."]
-position = Vector2(600, 630)
+position = Vector2(640, 700)
 script = ExtResource("2_rujo7")

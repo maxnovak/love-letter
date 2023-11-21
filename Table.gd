@@ -29,11 +29,12 @@ func create_deck():
 			deck.append(card)
 
 func deal_cards():
-	var playersCard = deck[0]
+	var playersCard = deck.pop_front()
+	playersCard.position = Vector2(-50,0)
 	$PlayersHand.add_child(playersCard)
 	
-	var playersCard2 = deck[1]
-	playersCard2.position = Vector2(100,0)
+	var playersCard2 = deck.pop_front()
+	playersCard2.position = Vector2(50,0)
 	$PlayersHand.add_child(playersCard2)
 	
 	for card in $PlayersHand.get_children():
