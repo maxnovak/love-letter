@@ -2,14 +2,14 @@ extends Node2D
 
 var deck := []
 var cardBreakdown := {
-	"princess": {"count": 1, "cardName": "Clubs_card_08", "value": 8},
-	"countess": {"count": 1, "cardName": "Clubs_card_07", "value": 7},
-	"king": {"count": 1, "cardName": "Clubs_card_06", "value": 6},
-	"prince": {"count": 2, "cardName": "Clubs_card_05", "value": 5},
-	"handmaid": {"count": 2, "cardName": "Clubs_card_04", "value": 4},
-	"baron": {"count": 2, "cardName": "Clubs_card_03", "value": 3},
-	"priest": {"count": 2, "cardName": "Clubs_card_02", "value": 2},
-	"guard": {"count": 5, "cardName": "Clubs_card_01", "value": 1},
+	"princess": {"count": 1, "cardName": "princess", "value": 8},
+	"countess": {"count": 1, "cardName": "countess", "value": 7},
+	"king": {"count": 1, "cardName": "king", "value": 6},
+	"prince": {"count": 2, "cardName": "prince", "value": 5},
+	"handmaid": {"count": 2, "cardName": "handmaid", "value": 4},
+	"baron": {"count": 2, "cardName": "baron", "value": 3},
+	"priest": {"count": 2, "cardName": "priest", "value": 2},
+	"guard": {"count": 5, "cardName": "guard", "value": 1},
 }
 
 const CardScene = preload("res://card.tscn")
