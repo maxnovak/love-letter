@@ -49,6 +49,6 @@ func _on_area_2d_mouse_entered():
 func _on_area_2d_mouse_exited():
 	hover_over_card.emit(false)
 
-func _on_area_2d_input_event(viewport, event, shape_idx):
+func _on_area_2d_input_event(_viewport, event, _shape_idx):
 	if (event is InputEventMouseButton && event.pressed):
 		clicked_card.emit(card)
