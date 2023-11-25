@@ -45,4 +45,4 @@ func deal_cards():
 	for card in $PlayersHand.get_children():
 		card.hover_over_card.connect($PlayersHand._on_Card_hover_over_card.bind(card))
 	for card in $PlayersHand.get_children():
-		card.clicked_card.connect($PlayersHand._on_Card_click)
+		card.clicked_card.connect($PlayersHand._on_Card_click.bind(card))
