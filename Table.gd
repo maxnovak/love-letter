@@ -1,16 +1,6 @@
 extends Node2D
 
 var deck := []
-var cardBreakdown := {
-	"princess": {"count": 1, "cardName": "princess", "value": 8},
-	"countess": {"count": 1, "cardName": "countess", "value": 7},
-	"king": {"count": 1, "cardName": "king", "value": 6},
-	"prince": {"count": 2, "cardName": "prince", "value": 5},
-	"handmaid": {"count": 2, "cardName": "handmaid", "value": 4},
-	"baron": {"count": 2, "cardName": "baron", "value": 3},
-	"priest": {"count": 2, "cardName": "priest", "value": 2},
-	"guard": {"count": 5, "cardName": "guard", "value": 1},
-}
 
 const CardScene = preload("res://card.tscn")
 
@@ -22,10 +12,10 @@ func _ready():
 	deal_cards()
 
 func create_deck():
-	for cardType in cardBreakdown:
-		for i in cardBreakdown[cardType].count:
+	for cardType in Global.cardBreakdown:
+		for i in Global.cardBreakdown[cardType].count:
 			var card := CardScene.instantiate()
-			card.setup(cardBreakdown[cardType].cardName, false)
+			card.setup(Global.cardBreakdown[cardType].cardName, false)
 			deck.append(card)
 
 func deal_cards():

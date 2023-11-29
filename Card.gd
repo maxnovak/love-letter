@@ -3,16 +3,6 @@ extends Node
 signal hover_over_card
 signal clicked_card
 
-const cardBreakdown := {
-	"princess": "Clubs_card_08",
-	"countess": "Clubs_card_07",
-	"king": "Clubs_card_06",
-	"prince": "Clubs_card_05",
-	"handmaid": "Clubs_card_04",
-	"baron": "Clubs_card_03",
-	"priest": "Clubs_card_02",
-	"guard": "Clubs_card_01",
-}
 const pickedSuit = "Clubs"
 const hiddenCard = preload("res://assets/Cards/Backs/back_0.png")
 
@@ -24,7 +14,7 @@ func _get_card():
 
 var visible: bool = false: set = _set_visible, get = _get_visible
 func _set_visible(new_value):
-	var path = "res://assets/Cards/Clubs/{cardType}.png".format({"cardType": cardBreakdown[card]})
+	var path = "res://assets/Cards/Clubs/{cardType}.png".format({"cardType": Global.cardBreakdown[card].assetName})
 	var visibleCard = load(path)
 	$Sprite2D.texture = visibleCard
 	visible = new_value
@@ -35,7 +25,7 @@ func _get_visible():
 func setup(cardType: String, visibility: bool):
 	card = cardType
 	visible = visibility
-	var path = "res://assets/Cards/Clubs/{cardType}.png".format({"cardType": cardBreakdown[cardType]})
+	var path = "res://assets/Cards/Clubs/{cardType}.png".format({"cardType": Global.cardBreakdown[cardType].assetName})
 	var visibleCard = load(path)
 
 	if visible:
