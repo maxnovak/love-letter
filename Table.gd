@@ -33,10 +33,11 @@ func deal_starting_cards():
 
 	for card in $PlayersHand.get_children():
 		card.hover_over_card.connect($PlayersHand._on_Card_hover_over_card.bind(card))
-	for card in $PlayersHand.get_children():
 		card.clicked_card.connect(on_Card_click.bind(card))
 
 func deal_card(player):
+	if deck.size() == 1:
+		return
 	var currentCard = player.get_child(0)
 	currentCard.position = Vector2(-50,0)
 
@@ -60,9 +61,31 @@ func on_Card_click(cardType, cardToRemove):
 		if card != cardToRemove:
 			card.position = Vector2(0,0)
 
-	cardToRemove.queue_free()
+	cardToRemove.position = Vector2(0,turn*20)
+	$PlayersHand.remove_child(cardToRemove)
+	$PlayedCards.add_child(cardToRemove)
+
 	next_player()
 
 func next_player():
 	turn += 1
 	deal_card(turnOrder[turn % turnOrder.size()])
+
+func _process(delta):
+	var current_player = turnOrder[turn % turnOrder.size()]
+	if current_player.get_child_count() == 1:
+		deal_card(turnOrder[turn % turnOrder.size()])
+
+func _on_opponent_hand_play_card(playedCard):
+	var activeOpponent = turnOrder[turn % turnOrder.size()]
+	for card in activeOpponent.get_children():
+		if card != playedCard:
+			card.position = Vector2(0,0)
+
+	playedCard.position = Vector2(0,turn*20)
+	playedCard._set_visible(true)
+
+	activeOpponent.remove_child(playedCard)
+	$PlayedCards.add_child(playedCard)
+
+	next_player()
