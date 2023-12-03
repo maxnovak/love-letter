@@ -24,6 +24,6 @@ theme_override_font_sizes/font_size = 25
 autowrap_mode = 2
 
 [node name="PlayedCards" type="Node2D" parent="."]
-position = Vector2(1188, 91)
+position = Vector2(427, 360)
 
 [connection signal="text" from="PlayersHand" to="HUD" method="_on_players_hand_text"]

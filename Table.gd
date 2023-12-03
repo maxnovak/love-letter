@@ -83,7 +83,7 @@ func _process(delta):
 
 func animate_card_play(card):
 	var position_end = $PlayedCards.get_global_position()
-	position_end.y += turn*20
+	position_end.x += turn*20
 	var duration_in_seconds = 1.0
 	var tween = create_tween()
 	tween.tween_property(card, "global_position", position_end, duration_in_seconds)
@@ -91,4 +91,4 @@ func animate_card_play(card):
 	await tween.finished # wait until move animation is complete
 	card.get_parent().remove_child(card)
 	$PlayedCards.add_child(card)
-	card.position = Vector2(0,turn*20) # reset local position after re-parenting
+	card.position = Vector2(turn*20,0) # reset local position after re-parenting
