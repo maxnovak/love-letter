@@ -60,32 +60,35 @@ func on_Card_click(cardType, cardToRemove):
 	for card in $PlayersHand.get_children():
 		if card != cardToRemove:
 			card.position = Vector2(0,0)
-
-	cardToRemove.position = Vector2(0,turn*20)
-	$PlayersHand.remove_child(cardToRemove)
-	$PlayedCards.add_child(cardToRemove)
+	await animate_card_play(cardToRemove)
 
 	next_player()
 
 func next_player():
 	turn += 1
-	deal_card(turnOrder[turn % turnOrder.size()])
 
 func _process(delta):
 	var current_player = turnOrder[turn % turnOrder.size()]
 	if current_player.get_child_count() == 1:
 		deal_card(turnOrder[turn % turnOrder.size()])
+		if current_player != $PlayersHand:
+			var cards = current_player.get_children()
+			var playedCard = cards[0]
+			cards[1].position = Vector2(0,0)
 
-func _on_opponent_hand_play_card(playedCard):
-	var activeOpponent = turnOrder[turn % turnOrder.size()]
-	for card in activeOpponent.get_children():
-		if card != playedCard:
-			card.position = Vector2(0,0)
+			playedCard._set_visible(true)
+			await animate_card_play(playedCard)
+			next_player()
 
-	playedCard.position = Vector2(0,turn*20)
-	playedCard._set_visible(true)
 
-	activeOpponent.remove_child(playedCard)
-	$PlayedCards.add_child(playedCard)
-
-	next_player()
+func animate_card_play(card):
+	var position_end = $PlayedCards.get_global_position()
+	position_end.y += turn*20
+	var duration_in_seconds = 1.0
+	var tween = create_tween()
+	tween.tween_property(card, "global_position", position_end, duration_in_seconds)
+	tween.play()
+	await tween.finished # wait until move animation is complete
+	card.get_parent().remove_child(card)
+	$PlayedCards.add_child(card)
+	card.position = Vector2(0,turn*20) # reset local position after re-parenting

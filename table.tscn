@@ -1,8 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://bmae37f4bd0sv"]
+[gd_scene load_steps=4 format=3 uid="uid://bmae37f4bd0sv"]
 
 [ext_resource type="Script" path="res://Table.gd" id="1_p1sh2"]
 [ext_resource type="Script" path="res://PlayersHand.gd" id="2_rujo7"]
-[ext_resource type="Script" path="res://OpponentHand.gd" id="3_5t7tx"]
 [ext_resource type="Script" path="res://HUD.gd" id="3_dgabu"]
 
 [node name="Table" type="Node2D"]
@@ -14,7 +13,6 @@ script = ExtResource("2_rujo7")
 
 [node name="OpponentHand" type="Node2D" parent="."]
 position = Vector2(640, 0)
-script = ExtResource("3_5t7tx")
 
 [node name="HUD" type="CanvasLayer" parent="."]
 script = ExtResource("3_dgabu")
@@ -29,4 +27,3 @@ autowrap_mode = 2
 position = Vector2(1188, 91)
 
 [connection signal="text" from="PlayersHand" to="HUD" method="_on_players_hand_text"]
-[connection signal="playCard" from="OpponentHand" to="." method="_on_opponent_hand_play_card"]
