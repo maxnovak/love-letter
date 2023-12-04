@@ -15,3 +15,10 @@ func hide_message():
 
 func _on_players_hand_text(cardType):
 	show_message(cardType)
+
+func show_instruction(text):
+	$Instruction.text = text
+	$Instruction.show()
+
+func hide_instruction():
+	$Instruction.hide()

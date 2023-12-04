@@ -15,6 +15,13 @@ position = Vector2(640, 700)
 [node name="HUD" type="CanvasLayer" parent="."]
 script = ExtResource("3_dgabu")
 
+[node name="Instruction" type="RichTextLabel" parent="HUD"]
+offset_left = 430.0
+offset_top = 159.0
+offset_right = 854.0
+offset_bottom = 395.0
+theme_override_font_sizes/normal_font_size = 25
+
 [node name="CardName" type="RichTextLabel" parent="HUD"]
 offset_right = 181.0
 offset_bottom = 56.0

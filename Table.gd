@@ -7,11 +7,14 @@ var turnOrder := []
 const CardScene = preload("res://card.tscn")
 const OpponentScene = preload("res://opponent.tscn")
 
+signal chooseOpponent
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	var opponent = OpponentScene.instantiate()
 	opponent.position = Vector2(640, 0)
 	opponent.name = "Opponent1"
+	opponent.clicked.connect(_chooseOpponent.bind(opponent))
 	add_child(opponent)
 	turnOrder = [$PlayersHand, opponent]
 	randomize()
@@ -58,7 +61,12 @@ func on_Card_click(cardType, cardToRemove):
 	if turnOrder[turn % turnOrder.size()] != $PlayersHand:
 		return
 	if cardType == "priest":
-		$OpponentHand.get_child(0)._set_visible(true)
+		$HUD.show_instruction("Choose opponent")
+		var opponent = await chooseOpponent
+		var opponentsHand = opponent.find_children("Card*", "Node2D", true, false)
+		for card in opponentsHand:
+			card._set_visible(true)
+		$HUD.hide_instruction()
 
 	for card in $PlayersHand.get_children():
 		if card != cardToRemove:
@@ -98,3 +106,6 @@ func animate_card_play(card):
 	card.get_parent().remove_child(card)
 	$PlayedCards.add_child(card)
 	card.position = Vector2(turn*20,0) # reset local position after re-parenting
+
+func _chooseOpponent(selected):
+	chooseOpponent.emit(selected)
