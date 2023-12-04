@@ -1,6 +1,7 @@
 extends CanvasLayer
 
-func show_message(card):
+func show_message(cardType):
+	var card = Global.cardBreakdown[cardType]
 	$HelpText.text = card.description
 	$HelpText.show()
 	$CardName.clear()
@@ -12,5 +13,5 @@ func hide_message():
 	$HelpText.hide()
 	$CardName.hide()
 
-func _on_players_hand_text(card):
-	show_message(card)
+func _on_players_hand_text(cardType):
+	show_message(cardType)

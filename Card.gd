@@ -1,6 +1,6 @@
 extends Node
 
-signal hover_over_card
+signal hover_over_card(cardType)
 signal clicked_card
 
 const pickedSuit = "Clubs"
@@ -34,10 +34,11 @@ func setup(cardType: String, visibility: bool):
 		$Sprite2D.texture = hiddenCard
 
 func _on_area_2d_mouse_entered():
-	hover_over_card.emit(true)
+	self.scale = Vector2(5,5)
+	hover_over_card.emit(card)
 
 func _on_area_2d_mouse_exited():
-	hover_over_card.emit(false)
+	self.scale = Vector2(3,3)
 
 func _on_area_2d_input_event(_viewport, event, _shape_idx):
 	if (event is InputEventMouseButton && event.pressed):

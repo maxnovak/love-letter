@@ -32,7 +32,7 @@ func deal_starting_cards():
 	$OpponentHand.add_child(opponentsCard)
 
 	for card in $PlayersHand.get_children():
-		card.hover_over_card.connect($PlayersHand._on_Card_hover_over_card.bind(card))
+		card.hover_over_card.connect($HUD._on_players_hand_text)
 		card.clicked_card.connect(on_Card_click.bind(card))
 
 func deal_card(player):
@@ -48,7 +48,7 @@ func deal_card(player):
 	player.add_child(newCard)
 
 	if player == $PlayersHand:
-		newCard.hover_over_card.connect($PlayersHand._on_Card_hover_over_card.bind(newCard))
+		newCard.hover_over_card.connect($HUD._on_players_hand_text)
 		newCard.clicked_card.connect(on_Card_click.bind(newCard))
 
 func on_Card_click(cardType, cardToRemove):
@@ -67,7 +67,7 @@ func on_Card_click(cardType, cardToRemove):
 func next_player():
 	turn += 1
 
-func _process(delta):
+func _process(_delta):
 	var current_player = turnOrder[turn % turnOrder.size()]
 	if current_player.get_child_count() == 1:
 		deal_card(turnOrder[turn % turnOrder.size()])
@@ -77,6 +77,7 @@ func _process(delta):
 			cards[1].position = Vector2(0,0)
 
 			playedCard._set_visible(true)
+			playedCard.hover_over_card.connect($HUD._on_players_hand_text)
 			await animate_card_play(playedCard)
 			next_player()
 
