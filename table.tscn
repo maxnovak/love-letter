@@ -12,9 +12,6 @@ position = Vector2(427, 360)
 [node name="PlayersHand" type="Node2D" parent="."]
 position = Vector2(640, 700)
 
-[node name="OpponentHand" type="Node2D" parent="."]
-position = Vector2(640, 0)
-
 [node name="HUD" type="CanvasLayer" parent="."]
 script = ExtResource("3_dgabu")
 

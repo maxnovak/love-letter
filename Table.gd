@@ -5,10 +5,15 @@ var turn = 0
 var turnOrder := []
 
 const CardScene = preload("res://card.tscn")
+const OpponentScene = preload("res://opponent.tscn")
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	turnOrder = [$PlayersHand, $OpponentHand]
+	var opponent = OpponentScene.instantiate()
+	opponent.position = Vector2(640, 0)
+	opponent.name = "Opponent1"
+	add_child(opponent)
+	turnOrder = [$PlayersHand, opponent]
 	randomize()
 	create_deck()
 	deck.shuffle()
@@ -23,13 +28,11 @@ func create_deck():
 			deck.append(card)
 
 func deal_starting_cards():
-	var playersCard = deck.pop_front()
-	playersCard.position = Vector2(-50,0)
-	playersCard._set_visible(true)
-	$PlayersHand.add_child(playersCard)
-
-	var opponentsCard = deck.pop_front()
-	$OpponentHand.add_child(opponentsCard)
+	for player in turnOrder:
+		var card = deck.pop_front()
+		player.add_child(card)
+		if player == $PlayersHand:
+			card._set_visible(true)
 
 	for card in $PlayersHand.get_children():
 		card.hover_over_card.connect($HUD._on_players_hand_text)
@@ -38,14 +41,14 @@ func deal_starting_cards():
 func deal_card(player):
 	if deck.size() == 1:
 		return
-	var currentCard = player.get_child(0)
-	currentCard.position = Vector2(-50,0)
+	var cards = player.find_children("Card*", "Node2D", true, false)
+	cards[0].position = Vector2(-50,0)
 
 	var newCard = deck.pop_front()
 	newCard.position = Vector2(50,0)
 	if player == $PlayersHand:
 		newCard._set_visible(true)
-	player.add_child(newCard)
+	player.add_child(newCard, true)
 
 	if player == $PlayersHand:
 		newCard.hover_over_card.connect($HUD._on_players_hand_text)
@@ -69,10 +72,12 @@ func next_player():
 
 func _process(_delta):
 	var current_player = turnOrder[turn % turnOrder.size()]
-	if current_player.get_child_count() == 1:
+
+	if current_player.find_children("Card*", "Node2D", true, false).size() == 1:
 		deal_card(turnOrder[turn % turnOrder.size()])
 		if current_player != $PlayersHand:
-			var cards = current_player.get_children()
+			# Bad AI for Opponent
+			var cards = current_player.find_children("Card*", "Node2D", true, false)
 			var playedCard = cards[0]
 			cards[1].position = Vector2(0,0)
 
