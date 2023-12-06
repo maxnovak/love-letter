@@ -42,8 +42,6 @@ func deal_starting_cards():
 		card.clicked_card.connect(on_Card_click.bind(card))
 
 func deal_card(player):
-	if deck.size() == 1:
-		return
 	var cards = player.find_children("Card*", "Node2D", true, false)
 	cards[0].position = Vector2(-50,0)
 
@@ -80,6 +78,10 @@ func next_player():
 
 func _process(_delta):
 	var current_player = turnOrder[turn % turnOrder.size()]
+
+	if deck.size() <= 1 && current_player.find_children("Card*", "Node2D", true, false).size() == 1:
+		Global.findWinner(turnOrder)
+		return
 
 	if current_player.find_children("Card*", "Node2D", true, false).size() == 1:
 		deal_card(turnOrder[turn % turnOrder.size()])
