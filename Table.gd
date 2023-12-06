@@ -3,6 +3,7 @@ extends Node2D
 var deck := []
 var turn = 0
 var turnOrder := []
+var dealCard = false
 
 const CardScene = preload("res://card.tscn")
 const OpponentScene = preload("res://opponent.tscn")
@@ -42,8 +43,9 @@ func deal_starting_cards():
 		card.clicked_card.connect(on_Card_click.bind(card))
 
 func deal_card(player):
-	var cards = player.find_children("Card*", "Node2D", true, false)
-	cards[0].position = Vector2(-50,0)
+	dealCard = false
+	var card = player.find_child("Card*", true, false)
+	card.position = Vector2(-50,0)
 
 	var newCard = deck.pop_front()
 	newCard.position = Vector2(50,0)
@@ -59,20 +61,22 @@ func on_Card_click(cardType, cardToRemove):
 	if turnOrder[turn % turnOrder.size()] != $PlayersHand:
 		return
 
+	for card in $PlayersHand.get_children():
+		if card != cardToRemove:
+			card.position = Vector2(0,0)
+	await animate_card_play(cardToRemove)
+
 	if cardType == "king":
 		$HUD.show_instruction("Choose opponent")
 		var opponent = await chooseOpponent
 		var opponentsCard = opponent.find_child("Card*", true, false)
 		opponentsCard._set_visible(true)
 		opponentsCard.clicked_card.connect(on_Card_click.bind(opponentsCard))
-		var playersCardToSwap
-		for card in $PlayersHand.get_children():
-			if card != cardToRemove:
-				playersCardToSwap = card
+		var playersCardToSwap = $PlayersHand.find_child("Card*", true, false)
 		playersCardToSwap._set_visible(false)
 		playersCardToSwap.hover_over_card.disconnect($HUD._on_players_hand_text)
 		opponentsCard.get_parent().remove_child(opponentsCard)
-		$PlayedCards.add_child(opponentsCard)
+		$PlayersHand.add_child(opponentsCard)
 		playersCardToSwap.get_parent().remove_child(playersCardToSwap)
 		opponent.add_child(playersCardToSwap)
 		$HUD.hide_instruction()
@@ -80,20 +84,15 @@ func on_Card_click(cardType, cardToRemove):
 	if cardType == "priest":
 		$HUD.show_instruction("Choose opponent")
 		var opponent = await chooseOpponent
-		var opponentsHand = opponent.find_children("Card*", "Node2D", true, false)
-		for card in opponentsHand:
-			card._set_visible(true)
+		var opponentsCard = opponent.find_child("Card*", true, false)
+		opponentsCard._set_visible(true)
 		$HUD.hide_instruction()
-
-	for card in $PlayersHand.get_children():
-		if card != cardToRemove:
-			card.position = Vector2(0,0)
-	await animate_card_play(cardToRemove)
 
 	next_player()
 
 func next_player():
 	turn += 1
+	dealCard = true
 
 func _process(_delta):
 	var current_player = turnOrder[turn % turnOrder.size()]
@@ -102,7 +101,7 @@ func _process(_delta):
 		Global.findWinner(turnOrder)
 		return
 
-	if current_player.find_children("Card*", "Node2D", true, false).size() == 1:
+	if dealCard == true:
 		deal_card(turnOrder[turn % turnOrder.size()])
 		if current_player != $PlayersHand:
 			# Bad AI for Opponent
