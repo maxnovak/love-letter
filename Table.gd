@@ -58,6 +58,25 @@ func deal_card(player):
 func on_Card_click(cardType, cardToRemove):
 	if turnOrder[turn % turnOrder.size()] != $PlayersHand:
 		return
+
+	if cardType == "king":
+		$HUD.show_instruction("Choose opponent")
+		var opponent = await chooseOpponent
+		var opponentsCard = opponent.find_child("Card*", true, false)
+		opponentsCard._set_visible(true)
+		opponentsCard.clicked_card.connect(on_Card_click.bind(opponentsCard))
+		var playersCardToSwap
+		for card in $PlayersHand.get_children():
+			if card != cardToRemove:
+				playersCardToSwap = card
+		playersCardToSwap._set_visible(false)
+		playersCardToSwap.hover_over_card.disconnect($HUD._on_players_hand_text)
+		opponentsCard.get_parent().remove_child(opponentsCard)
+		$PlayedCards.add_child(opponentsCard)
+		playersCardToSwap.get_parent().remove_child(playersCardToSwap)
+		opponent.add_child(playersCardToSwap)
+		$HUD.hide_instruction()
+
 	if cardType == "priest":
 		$HUD.show_instruction("Choose opponent")
 		var opponent = await chooseOpponent
