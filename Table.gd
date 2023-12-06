@@ -87,10 +87,13 @@ func on_Card_click(cardType, cardToRemove):
 		var opponentsCard = opponent.find_child("Card*", true, false)
 		opponentsCard._set_visible(true)
 		$HUD.hide_instruction()
+		$ViewCardTimer.start()
 
 	next_player()
 
 func next_player():
+	if !$ViewCardTimer.is_stopped():
+		await $ViewCardTimer.timeout
 	turn += 1
 	dealCard = true
 
