@@ -44,11 +44,13 @@ func deal_starting_cards():
 
 func deal_card(player):
 	dealCard = false
-	var card = player.find_child("Card*", true, false)
-	card.position = Vector2(-50,0)
-
 	var newCard = deck.pop_front()
-	newCard.position = Vector2(50,0)
+
+	var card = player.find_child("Card*", true, false)
+	if card != null:
+		card.position = Vector2(-50,0)
+		newCard.position = Vector2(50,0)
+
 	if player == $PlayersHand:
 		newCard._set_visible(true)
 	player.add_child(newCard, true)
@@ -80,6 +82,14 @@ func on_Card_click(cardType, cardToRemove):
 		playersCardToSwap.get_parent().remove_child(playersCardToSwap)
 		opponent.add_child(playersCardToSwap)
 		$HUD.hide_instruction()
+
+	if cardType == "prince":
+		$HUD.show_instruction("Choose opponent")
+		var opponent = await chooseOpponent
+		var opponentsCard = opponent.find_child("Card*", true, false)
+		opponentsCard._set_visible(true)
+		await animate_card_play(opponentsCard)
+		deal_card(opponent)
 
 	if cardType == "priest":
 		$HUD.show_instruction("Choose opponent")
@@ -119,8 +129,9 @@ func _process(_delta):
 
 
 func animate_card_play(card):
+	var newXCoord = $PlayedCards.get_children().size()*20
 	var position_end = $PlayedCards.get_global_position()
-	position_end.x += turn*20
+	position_end.x += newXCoord
 	var duration_in_seconds = 1.0
 	var tween = create_tween()
 	tween.tween_property(card, "global_position", position_end, duration_in_seconds)
@@ -128,7 +139,7 @@ func animate_card_play(card):
 	await tween.finished # wait until move animation is complete
 	card.get_parent().remove_child(card)
 	$PlayedCards.add_child(card)
-	card.position = Vector2(turn*20,0) # reset local position after re-parenting
+	card.position = Vector2(newXCoord,0) # reset local position after re-parenting
 
 func _chooseOpponent(selected):
 	chooseOpponent.emit(selected)
