@@ -59,15 +59,14 @@ const cardBreakdown := {
 	},
 }
 
-func findWinner(players):
+func findWinner(players) -> Node2D:
 	var playersValues =[]
 	for player in players:
 		var card = player.find_child("Card*", true, false)
 		card._set_visible(true)
 		playersValues.append(Global.cardBreakdown[card._get_card()].value)
+	# if the max and min are the same tis a tie
 	if playersValues[0] == playersValues.max() && playersValues[0] == playersValues.min():
-		print("tie")
-	elif playersValues[0] == playersValues.max():
-		print("winner")
+		return null
 	else:
-		print("lose")
+		return players[playersValues.find(playersValues.max())]

@@ -91,6 +91,20 @@ func on_Card_click(cardType, cardToRemove):
 		await animate_card_play(opponentsCard)
 		deal_card(opponent)
 
+	if cardType == "baron":
+		$HUD.show_instruction("Choose opponent")
+		var opponent = await chooseOpponent
+		var opponentsCard = opponent.find_child("Card*", true, false)
+		opponentsCard._set_visible(true)
+		var playersComparing = [$PlayersHand, opponent]
+		var winner = Global.findWinner(playersComparing)
+		$HUD.hide_instruction()
+		if winner == null:
+			$ViewCardTimer.start()
+		else:
+			playersComparing = playersComparing.filter(func(player): return player != winner)
+			turnOrder = turnOrder.filter(func(player): return !playersComparing.has(player))
+
 	if cardType == "priest":
 		$HUD.show_instruction("Choose opponent")
 		var opponent = await chooseOpponent
@@ -111,7 +125,11 @@ func _process(_delta):
 	var current_player = turnOrder[turn % turnOrder.size()]
 
 	if deck.size() <= 1 && current_player.find_children("Card*", "Node2D", true, false).size() == 1:
-		Global.findWinner(turnOrder)
+		var winner = Global.findWinner(turnOrder)
+		print(winner.name)
+		return
+	elif turnOrder.size() <= 1:
+		print(turnOrder[0].name)
 		return
 
 	if dealCard == true:
