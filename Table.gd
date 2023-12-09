@@ -62,10 +62,14 @@ func deal_card(player):
 func on_Card_click(cardType, cardToRemove):
 	if turnOrder[turn % turnOrder.size()] != $PlayersHand:
 		return
+
 	var otherCard
 	for card in $PlayersHand.get_children():
 		if card != cardToRemove:
 			otherCard = card
+
+	if cardType == "princess":
+		turnOrder = turnOrder.filter(func(player): return player != $PlayersHand)
 
 	if otherCard._get_card() == "countess" && \
 	(cardType == "prince" || cardType == "king"):
