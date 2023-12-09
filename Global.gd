@@ -12,7 +12,7 @@ const cardBreakdown := {
 		"assetName": "Clubs_card_07",
 		"cardName": "countess",
 		"count": 1,
-		"description": "If you have this card and the King (6) or Prince (5).",
+		"description": "If you have this card and the King (6) or Prince (5) in your hand, you must discard this card.",
 		"value": 7,
 	},
 	"king": {

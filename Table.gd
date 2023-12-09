@@ -62,10 +62,17 @@ func deal_card(player):
 func on_Card_click(cardType, cardToRemove):
 	if turnOrder[turn % turnOrder.size()] != $PlayersHand:
 		return
-
+	var otherCard
 	for card in $PlayersHand.get_children():
 		if card != cardToRemove:
-			card.position = Vector2(0,0)
+			otherCard = card
+
+	if otherCard._get_card() == "countess" && \
+	(cardType == "prince" || cardType == "king"):
+		$HUD.show_instruction("Cannot play card")
+		return
+
+	otherCard.position = Vector2(0,0)
 	await animate_card_play(cardToRemove)
 
 	if cardType == "king":
