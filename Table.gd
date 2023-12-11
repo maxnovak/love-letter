@@ -78,12 +78,16 @@ func on_Card_click(cardType, cardToRemove):
 
 	otherCard.position = Vector2(0,0)
 	await animate_card_play(cardToRemove)
-	await resolveCard(cardType)
+	await resolveCard($PlayersHand, cardType)
 	next_player()
 
 func next_player():
 	if !$ViewCardTimer.is_stopped():
 		await $ViewCardTimer.timeout
+		for player in turnOrder:
+			if player != $PlayersHand:
+				var playersCard = player.find_child("Card*", true, false)
+				playersCard._set_visible(false)
 	turn += 1
 	dealCard = true
 
@@ -109,8 +113,8 @@ func _process(_delta):
 			playedCard._set_visible(true)
 			playedCard.hover_over_card.connect($HUD._on_players_hand_text)
 			await animate_card_play(playedCard)
+			resolveCard(current_player, playedCard._get_card())
 			next_player()
-
 
 func animate_card_play(card):
 	var newXCoord = $PlayedCards.get_children().size()*20
@@ -128,48 +132,80 @@ func animate_card_play(card):
 func _chooseOpponent(selected):
 	chooseOpponent.emit(selected)
 
-func resolveCard(playedCard):
+func resolveCard(player, playedCard):
 	if playedCard == "king":
-		$HUD.show_instruction("Choose opponent")
-		var opponent = await chooseOpponent
+		var opponent
+		if player == $PlayersHand:
+			$HUD.show_instruction("Choose opponent")
+			opponent = await chooseOpponent
+		else:
+			opponent = getRandomOpponent(player)
 		var opponentsCard = opponent.find_child("Card*", true, false)
-		opponentsCard._set_visible(true)
-		opponentsCard.clicked_card.connect(on_Card_click.bind(opponentsCard))
-		var playersCardToSwap = $PlayersHand.find_child("Card*", true, false)
-		playersCardToSwap._set_visible(false)
-		playersCardToSwap.hover_over_card.disconnect($HUD._on_players_hand_text)
+		if player == $PlayersHand:
+			opponentsCard._set_visible(true)
+			opponentsCard.clicked_card.connect(on_Card_click.bind(opponentsCard))
+		var playersCardToSwap = player.find_child("Card*", true, false)
+		if playersCardToSwap.hover_over_card.is_connected():
+			playersCardToSwap.hover_over_card.disconnect($HUD._on_players_hand_text)
+		if opponent == $PlayersHand:
+			playersCardToSwap._set_visible(true)
+			playersCardToSwap.clicked_card.connect(on_Card_click.bind(playersCardToSwap))
 		opponentsCard.get_parent().remove_child(opponentsCard)
-		$PlayersHand.add_child(opponentsCard)
+		player.add_child(opponentsCard)
 		playersCardToSwap.get_parent().remove_child(playersCardToSwap)
 		opponent.add_child(playersCardToSwap)
 		$HUD.hide_instruction()
 
 	if playedCard == "prince":
-		$HUD.show_instruction("Choose opponent")
-		var opponent = await chooseOpponent
+		var opponent
+		if player == $PlayersHand:
+			$HUD.show_instruction("Choose opponent")
+			opponent = await chooseOpponent
+		else:
+			opponent = getRandomOpponent(player)
 		var opponentsCard = opponent.find_child("Card*", true, false)
 		opponentsCard._set_visible(true)
 		await animate_card_play(opponentsCard)
-		deal_card(opponent)
+		if opponentsCard._get_card() == "princess":
+			turnOrder = turnOrder.filter(func(opp): return opp != opponent)
+		else:
+			deal_card(opponent)
 
 	if playedCard == "baron":
-		$HUD.show_instruction("Choose opponent")
-		var opponent = await chooseOpponent
+		var opponent
+		if player == $PlayersHand:
+			$HUD.show_instruction("Choose opponent")
+			opponent = await chooseOpponent
+		else:
+			opponent = getRandomOpponent(player)
 		var opponentsCard = opponent.find_child("Card*", true, false)
-		opponentsCard._set_visible(true)
-		var playersComparing = [$PlayersHand, opponent]
+		var playersCard = player.find_child("Card*", true, false)
+		if player == $PlayersHand:
+			opponentsCard._set_visible(true)
+		if opponent == $PlayersHand:
+			playersCard._set_visible(true)
+		var playersComparing = [player, opponent]
 		var winner = Global.findWinner(playersComparing)
 		$HUD.hide_instruction()
 		if winner == null:
 			$ViewCardTimer.start()
 		else:
-			playersComparing = playersComparing.filter(func(player): return player != winner)
-			turnOrder = turnOrder.filter(func(player): return !playersComparing.has(player))
+			playersComparing = playersComparing.filter(func(play): return play != winner)
+			turnOrder = turnOrder.filter(func(play): return !playersComparing.has(play))
 
 	if playedCard == "priest":
-		$HUD.show_instruction("Choose opponent")
-		var opponent = await chooseOpponent
+		var opponent
+		if player == $PlayersHand:
+			$HUD.show_instruction("Choose opponent")
+			opponent = await chooseOpponent
+		else:
+			return #Skipping AI logic mostly so no need to have them look at stuff
 		var opponentsCard = opponent.find_child("Card*", true, false)
 		opponentsCard._set_visible(true)
 		$HUD.hide_instruction()
 		$ViewCardTimer.start()
+
+func getRandomOpponent(player):
+	var opponents = turnOrder.filter(func(opp): return opp != player)
+	opponents.shuffle()
+	return opponents[0]
