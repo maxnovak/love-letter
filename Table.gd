@@ -14,7 +14,7 @@ signal chooseOpponent
 func _ready():
 	var opponent = OpponentScene.instantiate()
 	opponent.position = Vector2(640, 0)
-	opponent.name = "Opponent1"
+	opponent.name = "Erol"
 	opponent.clicked.connect(_chooseOpponent.bind(opponent))
 	add_child(opponent)
 	turnOrder = [$PlayersHand, opponent]
@@ -38,7 +38,7 @@ func deal_starting_cards():
 		if player == $PlayersHand:
 			card._set_visible(true)
 
-	for card in $PlayersHand.get_children():
+	for card in $PlayersHand.find_children("Card*", "Node2D", true, false):
 		card.hover_over_card.connect($HUD._on_players_hand_text)
 		card.clicked_card.connect(on_Card_click.bind(card))
 
@@ -62,9 +62,11 @@ func deal_card(player):
 func on_Card_click(cardType, cardToRemove):
 	if turnOrder[turn % turnOrder.size()] != $PlayersHand:
 		return
+	if $PlayersHand.get_child_count() == 1:
+		return
 
 	var otherCard
-	for card in $PlayersHand.get_children():
+	for card in $PlayersHand.find_children("Card*", "Node2D", true, false):
 		if card != cardToRemove:
 			otherCard = card
 
@@ -96,10 +98,17 @@ func _process(_delta):
 
 	if deck.size() <= 1 && current_player.find_children("Card*", "Node2D", true, false).size() == 1:
 		var winner = Global.findWinner(turnOrder)
-		print(winner.name)
+		if winner == $PlayersHand:
+			$HUD.show_instruction("Winner is: You!")
+		else:
+			$HUD.show_instruction("Winner is: %s" % winner.name)
 		return
 	elif turnOrder.size() <= 1:
-		print(turnOrder[0].name)
+		var winner = turnOrder[0]
+		if winner == $PlayersHand:
+			$HUD.show_instruction("Winner is: You!")
+		else:
+			$HUD.show_instruction("Winner is: %s" % winner.name)
 		return
 
 	if dealCard == true:
@@ -145,7 +154,7 @@ func resolveCard(player, playedCard):
 			opponentsCard._set_visible(true)
 			opponentsCard.clicked_card.connect(on_Card_click.bind(opponentsCard))
 		var playersCardToSwap = player.find_child("Card*", true, false)
-		if playersCardToSwap.hover_over_card.is_connected():
+		if playersCardToSwap.hover_over_card.is_connected($HUD._on_players_hand_text):
 			playersCardToSwap.hover_over_card.disconnect($HUD._on_players_hand_text)
 		if opponent == $PlayersHand:
 			playersCardToSwap._set_visible(true)

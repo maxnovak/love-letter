@@ -13,4 +13,10 @@ script = ExtResource("1_2m3pf")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 shape = SubResource("RectangleShape2D_rqs40")
 
+[node name="PlayerName" type="RichTextLabel" parent="."]
+offset_left = 199.0
+offset_right = 242.0
+offset_bottom = 29.0
+text = "Erol"
+
 [connection signal="input_event" from="Area2D" to="." method="_on_area_2d_input_event"]
