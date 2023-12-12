@@ -1,7 +1,11 @@
-[gd_scene load_steps=3 format=3 uid="uid://bmae37f4bd0sv"]
+[gd_scene load_steps=5 format=3 uid="uid://bmae37f4bd0sv"]
 
 [ext_resource type="Script" path="res://Table.gd" id="1_p1sh2"]
+[ext_resource type="Script" path="res://PlayersHand.gd" id="2_oac6i"]
 [ext_resource type="Script" path="res://HUD.gd" id="3_dgabu"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bmxjs"]
+size = Vector2(364, 130)
 
 [node name="Table" type="Node2D"]
 script = ExtResource("1_p1sh2")
@@ -11,6 +15,12 @@ position = Vector2(427, 360)
 
 [node name="PlayersHand" type="Node2D" parent="."]
 position = Vector2(640, 700)
+script = ExtResource("2_oac6i")
+
+[node name="Area2D" type="Area2D" parent="PlayersHand"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayersHand/Area2D"]
+shape = SubResource("RectangleShape2D_bmxjs")
 
 [node name="HUD" type="CanvasLayer" parent="."]
 script = ExtResource("3_dgabu")
@@ -38,3 +48,5 @@ autowrap_mode = 2
 [node name="ViewCardTimer" type="Timer" parent="."]
 wait_time = 1.5
 one_shot = true
+
+[connection signal="input_event" from="PlayersHand/Area2D" to="PlayersHand" method="_on_area_2d_input_event"]

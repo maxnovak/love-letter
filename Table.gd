@@ -9,6 +9,7 @@ const CardScene = preload("res://card.tscn")
 const OpponentScene = preload("res://opponent.tscn")
 
 signal chooseOpponent
+signal choosePlayer
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -16,9 +17,10 @@ func _ready():
 	opponent.position = Vector2(640, 0)
 	opponent.name = "Erol"
 	opponent.clicked.connect(_chooseOpponent.bind(opponent))
+	opponent.clicked.connect(_choosePlayer.bind(opponent))
 	add_child(opponent)
+	$PlayersHand.clicked.connect(_choosePlayer.bind($PlayersHand))
 	turnOrder = [$PlayersHand, opponent]
-	randomize()
 	create_deck()
 	deck.shuffle()
 	deal_starting_cards()
@@ -45,6 +47,7 @@ func deal_starting_cards():
 func deal_card(player):
 	dealCard = false
 	var newCard = deck.pop_front()
+	newCard.name = "Card%s" % turn
 
 	var card = player.find_child("Card*", true, false)
 	if card != null:
@@ -53,11 +56,9 @@ func deal_card(player):
 
 	if player == $PlayersHand:
 		newCard._set_visible(true)
-	player.add_child(newCard, true)
-
-	if player == $PlayersHand:
 		newCard.hover_over_card.connect($HUD._on_players_hand_text)
 		newCard.clicked_card.connect(on_Card_click.bind(newCard))
+	player.add_child(newCard, true)
 
 func on_Card_click(cardType, cardToRemove):
 	if turnOrder[turn % turnOrder.size()] != $PlayersHand:
@@ -120,7 +121,8 @@ func _process(_delta):
 			cards[1].position = Vector2(0,0)
 
 			playedCard._set_visible(true)
-			playedCard.hover_over_card.connect($HUD._on_players_hand_text)
+			if !playedCard.hover_over_card.is_connected($HUD._on_players_hand_text):
+				playedCard.hover_over_card.connect($HUD._on_players_hand_text)
 			await animate_card_play(playedCard)
 			resolveCard(current_player, playedCard._get_card())
 			next_player()
@@ -140,6 +142,9 @@ func animate_card_play(card):
 
 func _chooseOpponent(selected):
 	chooseOpponent.emit(selected)
+
+func _choosePlayer(selected):
+	choosePlayer.emit(selected)
 
 func resolveCard(player, playedCard):
 	if playedCard == "king":
@@ -169,9 +174,9 @@ func resolveCard(player, playedCard):
 		var opponent
 		if player == $PlayersHand:
 			$HUD.show_instruction("Choose opponent")
-			opponent = await chooseOpponent
+			opponent = await choosePlayer
 		else:
-			opponent = getRandomOpponent(player)
+			opponent = turnOrder[randi() % turnOrder.size()-1]
 		var opponentsCard = opponent.find_child("Card*", true, false)
 		opponentsCard._set_visible(true)
 		await animate_card_play(opponentsCard)
