@@ -59,6 +59,9 @@ const cardBreakdown := {
 	},
 }
 
+var seats = ["top", "left", "right"]
+var playerNames = ["Erol", "Max", "Jill", "Harley", "Zara", "Louise", "Maya", "Malcom", "Otis", "Zoey", "Koda", "Remi", "Willow", "Lillie", "Molly", "Randy", "Maggie", "Cat", "Alan", "Corey", "Michal", "Elyse", "Paul"]
+
 func findWinner(players) -> Node2D:
 	var playersValues =[]
 	for player in players:

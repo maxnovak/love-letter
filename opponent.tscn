@@ -15,7 +15,7 @@ shape = SubResource("RectangleShape2D_rqs40")
 
 [node name="PlayerName" type="RichTextLabel" parent="."]
 offset_left = 199.0
-offset_right = 242.0
+offset_right = 281.0
 offset_bottom = 29.0
 text = "Erol"
 

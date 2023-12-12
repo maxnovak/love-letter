@@ -13,19 +13,34 @@ signal choosePlayer
 signal chooseCard
 
 # Called when the node enters the scene tree for the first time.
-func _ready():
-	var opponent = OpponentScene.instantiate()
-	opponent.position = Vector2(640, 0)
-	opponent.name = "Erol"
-	opponent.clicked.connect(_chooseOpponent.bind(opponent))
-	opponent.clicked.connect(_choosePlayer.bind(opponent))
-	add_child(opponent)
+func setup(numberOfPlayers: int):
 	$PlayersHand.clicked.connect(_choosePlayer.bind($PlayersHand))
-	turnOrder = [$PlayersHand, opponent]
+	turnOrder = [$PlayersHand]
+	Global.playerNames.shuffle()
+	for i in range(numberOfPlayers):
+		var opponent = createOpponent(Global.playerNames[i], Global.seats[i])
+		add_child(opponent)
+		turnOrder.append(opponent)
 	create_deck()
 	deck.shuffle()
 	deal_starting_cards()
 	deal_card(turnOrder[turn])
+
+func createOpponent(playerName: String, location: String) -> Node2D:
+	var opponent = OpponentScene.instantiate()
+	if location == "top":
+		opponent.position = Vector2(640, 0)
+	if location == "left":
+		opponent.position = Vector2(25, 340)
+		opponent.rotation_degrees = 90
+	if location == "right":
+		opponent.position = Vector2(1255, 340)
+		opponent.rotation_degrees = -90
+	opponent.name = playerName
+	opponent._set_playerName(playerName)
+	opponent.clicked.connect(_chooseOpponent.bind(opponent))
+	opponent.clicked.connect(_choosePlayer.bind(opponent))
+	return opponent
 
 func create_deck():
 	for cardType in Global.cardBreakdown:

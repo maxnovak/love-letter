@@ -1,0 +1,29 @@
+[gd_scene load_steps=2 format=3 uid="uid://dvuvvs0finhef"]
+
+[ext_resource type="Script" path="res://NewGame.gd" id="1_oiu62"]
+
+[node name="NewGame" type="Node2D"]
+script = ExtResource("1_oiu62")
+
+[node name="NumberOfPlayers" type="OptionButton" parent="."]
+offset_left = 580.0
+offset_top = 300.0
+offset_right = 700.0
+offset_bottom = 332.0
+item_count = 3
+selected = 2
+popup/item_0/text = "2 Players"
+popup/item_0/id = 1
+popup/item_1/text = "3 Players"
+popup/item_1/id = 2
+popup/item_2/text = "4 Players"
+popup/item_2/id = 3
+
+[node name="Start" type="Button" parent="."]
+offset_left = 590.0
+offset_top = 360.0
+offset_right = 690.0
+offset_bottom = 392.0
+text = "Start Game"
+
+[connection signal="pressed" from="Start" to="." method="_on_start_pressed"]

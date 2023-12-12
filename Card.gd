@@ -21,7 +21,6 @@ func _set_visible(new_value):
 func _get_visible():
 	return visible
 
-
 func setup(cardType: String, visibility: bool, noHover: bool = false):
 	card = cardType
 	visible = visibility
