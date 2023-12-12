@@ -177,7 +177,7 @@ func resolveCard(player, playedCard):
 	if playedCard == "prince":
 		var opponent
 		if player == $PlayersHand:
-			$HUD.show_instruction("Choose opponent")
+			$HUD.show_instruction("Choose player")
 			opponent = await choosePlayer
 		else:
 			opponent = turnOrder[randi() % turnOrder.size()-1]
