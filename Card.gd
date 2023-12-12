@@ -22,7 +22,7 @@ func _get_visible():
 	return visible
 
 
-func setup(cardType: String, visibility: bool):
+func setup(cardType: String, visibility: bool, noHover: bool = false):
 	card = cardType
 	visible = visibility
 	var path = "res://assets/Cards/Clubs/{cardType}.png".format({"cardType": Global.cardBreakdown[cardType].assetName})
@@ -32,6 +32,10 @@ func setup(cardType: String, visibility: bool):
 		$Sprite2D.texture = visibleCard
 	else:
 		$Sprite2D.texture = hiddenCard
+
+	if noHover:
+		$Area2D.mouse_entered.disconnect(self._on_area_2d_mouse_entered)
+		$Area2D.mouse_exited.disconnect(self._on_area_2d_mouse_exited)
 
 func _on_area_2d_mouse_entered():
 	self.scale = Vector2(5,5)

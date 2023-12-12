@@ -29,7 +29,7 @@ script = ExtResource("3_dgabu")
 offset_left = 430.0
 offset_top = 159.0
 offset_right = 854.0
-offset_bottom = 395.0
+offset_bottom = 217.0
 theme_override_font_sizes/normal_font_size = 25
 
 [node name="CardName" type="RichTextLabel" parent="HUD"]
@@ -48,5 +48,8 @@ autowrap_mode = 2
 [node name="ViewCardTimer" type="Timer" parent="."]
 wait_time = 1.5
 one_shot = true
+
+[node name="GuardDisplay" type="Node2D" parent="."]
+position = Vector2(640, 360)
 
 [connection signal="input_event" from="PlayersHand/Area2D" to="PlayersHand" method="_on_area_2d_input_event"]

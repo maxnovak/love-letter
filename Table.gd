@@ -10,6 +10,7 @@ const OpponentScene = preload("res://opponent.tscn")
 
 signal chooseOpponent
 signal choosePlayer
+signal chooseCard
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -83,6 +84,9 @@ func on_Card_click(cardType, cardToRemove):
 	await animate_card_play(cardToRemove)
 	await resolveCard($PlayersHand, cardType)
 	next_player()
+
+func on_guard_select(cardType):
+	chooseCard.emit(cardType)
 
 func next_player():
 	if !$ViewCardTimer.is_stopped():
@@ -218,6 +222,41 @@ func resolveCard(player, playedCard):
 		opponentsCard._set_visible(true)
 		$HUD.hide_instruction()
 		$ViewCardTimer.start()
+
+	if playedCard == "guard":
+		var cardsToDisplay = {}
+		for card in Global.cardBreakdown:
+			if card == "guard":
+				continue
+			var choice := CardScene.instantiate()
+			choice.setup(card, true, true)
+			cardsToDisplay[card] = choice
+		var opponent
+		if player == $PlayersHand:
+			$HUD.show_instruction("Choose opponent")
+			opponent = await chooseOpponent
+		else:
+			opponent = getRandomOpponent(player)
+		var v = cardsToDisplay.size()/2
+		var placement = range(-v, v+1)
+		var i = 0
+		for card in cardsToDisplay.values():
+			card.position = Vector2(placement[i]*150, 0)
+			card.scale = Vector2(5,5)
+			card.clicked_card.connect(on_guard_select)
+			$GuardDisplay.add_child(card)
+			i += 1
+		var cardToGuess
+		$HUD.show_instruction("Choose a card")
+		cardToGuess = await chooseCard
+		var opponentsCard = opponent.find_child("Card*", true, false)
+		if cardToGuess == opponentsCard._get_card():
+			opponentsCard._set_visible(true)
+			turnOrder = turnOrder.filter(func(opp): return opp != opponent)
+		$HUD.hide_instruction()
+		for n in $GuardDisplay.get_children():
+			$GuardDisplay.remove_child(n)
+			n.queue_free()
 
 func getRandomOpponent(player):
 	var opponents = turnOrder.filter(func(opp): return opp != player)
