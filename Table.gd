@@ -87,9 +87,6 @@ func on_Card_click(cardType, cardToRemove):
 		if card != cardToRemove:
 			otherCard = card
 
-	if cardType == "princess":
-		turnOrder = turnOrder.filter(func(player): return player != $PlayersHand)
-
 	if otherCard._get_card() == "countess" && \
 	(cardType == "prince" || cardType == "king"):
 		$HUD.show_instruction("Cannot play card")
@@ -166,6 +163,12 @@ func _choosePlayer(selected):
 	choosePlayer.emit(selected)
 
 func resolveCard(player, playedCard):
+	if playedCard == "princess":
+		var playersCard = player.find_child("Card*", true, false)
+		playersCard._set_visible(true)
+		await animate_card_play(playersCard)
+		turnOrder = turnOrder.filter(func(play): return play != player)
+
 	if playedCard == "king":
 		var opponent
 		if player == $PlayersHand:
@@ -223,8 +226,11 @@ func resolveCard(player, playedCard):
 		if winner == null:
 			$ViewCardTimer.start()
 		else:
-			playersComparing = playersComparing.filter(func(play): return play != winner)
-			turnOrder = turnOrder.filter(func(play): return !playersComparing.has(play))
+			var loser = playersComparing.find(!winner)
+			turnOrder = turnOrder.filter(func(play): return play != playersComparing[loser])
+			var losersCard = playersComparing[loser].find_child("Card*", true, false)
+			losersCard._set_visible(true)
+			await animate_card_play(losersCard)
 
 	if playedCard == "priest":
 		var opponent
@@ -267,6 +273,7 @@ func resolveCard(player, playedCard):
 		var opponentsCard = opponent.find_child("Card*", true, false)
 		if cardToGuess == opponentsCard._get_card():
 			opponentsCard._set_visible(true)
+			await animate_card_play(opponentsCard)
 			turnOrder = turnOrder.filter(func(opp): return opp != opponent)
 		$HUD.hide_instruction()
 		for n in $GuardDisplay.get_children():
