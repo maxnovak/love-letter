@@ -135,6 +135,9 @@ func _process(_delta):
 			var cards = current_player.find_children("Card*", "Node2D", true, false)
 			var playedCard = cards[0]
 			cards[1].position = Vector2(0,0)
+			if cards[0]._get_card() == "princess":
+				playedCard = cards[1]
+				cards[0].position = Vector2(0,0)
 
 			playedCard._set_visible(true)
 			if !playedCard.hover_over_card.is_connected($HUD._on_players_hand_text):
