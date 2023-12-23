@@ -62,11 +62,12 @@ const cardBreakdown := {
 var seats = ["top", "left", "right"]
 var playerNames = ["Erol", "Max", "Jill", "Harley", "Zara", "Louise", "Maya", "Malcom", "Otis", "Zoey", "Koda", "Remi", "Willow", "Lillie", "Molly", "Randy", "Maggie", "Cat", "Alan", "Corey", "Michal", "Elyse", "Paul"]
 
-func findWinner(players) -> Node2D:
+func findWinner(players, final = false) -> Node2D:
 	var playersValues =[]
 	for player in players:
 		var card = player.find_child("Card*", true, false)
-		card._set_visible(true)
+		if final:
+			card._set_visible(true)
 		playersValues.append(Global.cardBreakdown[card._get_card()].value)
 	# if the max and min are the same tis a tie
 	if playersValues[0] == playersValues.max() && playersValues[0] == playersValues.min():

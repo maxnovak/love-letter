@@ -16,7 +16,10 @@ var visible: bool = false: set = _set_visible, get = _get_visible
 func _set_visible(new_value):
 	var path = "res://assets/Cards/Clubs/{cardType}.png".format({"cardType": Global.cardBreakdown[card].assetName})
 	var visibleCard = load(path)
-	$Sprite2D.texture = visibleCard
+	if new_value == true:
+		$Sprite2D.texture = visibleCard
+	else:
+		$Sprite2D.texture = hiddenCard
 	visible = new_value
 func _get_visible():
 	return visible
