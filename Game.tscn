@@ -1,11 +1,16 @@
-[gd_scene load_steps=3 format=3 uid="uid://b4ny6qi2rv5i8"]
+[gd_scene load_steps=4 format=3 uid="uid://b4ny6qi2rv5i8"]
 
 [ext_resource type="Script" path="res://Game.gd" id="1_tuam6"]
 [ext_resource type="PackedScene" uid="uid://dvuvvs0finhef" path="res://NewGame.tscn" id="2_po6xf"]
+[ext_resource type="AudioStream" uid="uid://bd0fb4p2nfubw" path="res://assets/music/out-of-time-15474.mp3" id="3_ltmq3"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_tuam6")
 
 [node name="NewGame" parent="." instance=ExtResource("2_po6xf")]
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_ltmq3")
+autoplay = true
 
 [connection signal="startGame" from="NewGame" to="." method="new_game"]
