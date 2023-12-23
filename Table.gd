@@ -229,9 +229,9 @@ func resolveCard(player, playedCard):
 		if winner == null:
 			$ViewCardTimer.start()
 		else:
-			var loser = playersComparing.find(!winner)
-			turnOrder = turnOrder.filter(func(play): return play != playersComparing[loser])
-			var losersCard = playersComparing[loser].find_child("Card*", true, false)
+			var loser = playersComparing.filter(func(play): return play != winner)[0]
+			turnOrder = turnOrder.filter(func(play): return play != loser)
+			var losersCard = loser.find_child("Card*", true, false)
 			losersCard._set_visible(true)
 			await animate_card_play(losersCard)
 
