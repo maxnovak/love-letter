@@ -256,23 +256,25 @@ func resolveCard(player, playedCard):
 			choice.setup(card, true, true)
 			cardsToDisplay[card] = choice
 		var opponent
+		var cardToGuess
 		if player == $PlayersHand:
 			$HUD.show_instruction("Choose opponent")
 			opponent = await chooseOpponent
+			var v = cardsToDisplay.size()/2
+			var placement = range(-v, v+1)
+			var i = 0
+			for card in cardsToDisplay.values():
+				card.position = Vector2(placement[i]*150, 0)
+				card.scale = Vector2(5,5)
+				card.clicked_card.connect(on_guard_select)
+				$GuardDisplay.add_child(card)
+				i += 1
+			$HUD.show_instruction("Choose a card")
+			cardToGuess = await chooseCard
 		else:
 			opponent = getRandomOpponent(player)
-		var v = cardsToDisplay.size()/2
-		var placement = range(-v, v+1)
-		var i = 0
-		for card in cardsToDisplay.values():
-			card.position = Vector2(placement[i]*150, 0)
-			card.scale = Vector2(5,5)
-			card.clicked_card.connect(on_guard_select)
-			$GuardDisplay.add_child(card)
-			i += 1
-		var cardToGuess
-		$HUD.show_instruction("Choose a card")
-		cardToGuess = await chooseCard
+			cardToGuess = getRandomCard(cardsToDisplay.keys())
+
 		var opponentsCard = opponent.find_child("Card*", true, false)
 		if cardToGuess == opponentsCard._get_card():
 			opponentsCard._set_visible(true)
@@ -287,3 +289,7 @@ func getRandomOpponent(player):
 	var opponents = turnOrder.filter(func(opp): return opp != player)
 	opponents.shuffle()
 	return opponents[0]
+
+func getRandomCard(cards):
+	cards.shuffle()
+	return cards[0]
