@@ -163,7 +163,7 @@ func resolveCard(player, playedCard):
 	if playedCard == "princess":
 		var playersCard = player.find_child("Card*", true, false)
 		await animate_card_play(playersCard)
-		turnOrder = turnOrder.filter(func(play): return play != player)
+		turnOrder.pop_at(turnOrder.find(player))
 
 	if playedCard == "king":
 		var opponent
@@ -203,7 +203,7 @@ func resolveCard(player, playedCard):
 		var opponentsCard = opponent.find_child("Card*", true, false)
 		await animate_card_play(opponentsCard)
 		if opponentsCard._get_card() == "princess":
-			turnOrder = turnOrder.filter(func(opp): return opp != opponent)
+			turnOrder.pop_at(turnOrder.find(opponent))
 		else:
 			deal_card(opponent)
 
@@ -227,7 +227,7 @@ func resolveCard(player, playedCard):
 			$ViewCardTimer.start()
 		else:
 			var loser = playersComparing.filter(func(play): return play != winner)[0]
-			turnOrder = turnOrder.filter(func(play): return play != loser)
+			turnOrder.pop_at(turnOrder.find(loser))
 			var losersCard = loser.find_child("Card*", true, false)
 			await animate_card_play(losersCard)
 		$ViewCardTimer.start()
@@ -275,7 +275,7 @@ func resolveCard(player, playedCard):
 		var opponentsCard = opponent.find_child("Card*", true, false)
 		if cardToGuess == opponentsCard._get_card():
 			await animate_card_play(opponentsCard)
-			turnOrder = turnOrder.filter(func(opp): return opp != opponent)
+			turnOrder.pop_at(turnOrder.find(opponent))
 		$HUD.hide_instruction()
 		for n in $GuardDisplay.get_children():
 			$GuardDisplay.remove_child(n)
