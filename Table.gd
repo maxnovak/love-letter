@@ -2,6 +2,7 @@ extends Node2D
 
 var deck := []
 var turn = 0
+var current_player
 var turnOrder := []
 var dealCard = false
 
@@ -24,7 +25,8 @@ func setup(numberOfPlayers: int):
 	create_deck()
 	deck.shuffle()
 	deal_starting_cards()
-	deal_card(turnOrder[turn])
+	current_player = turnOrder[turn]
+	deal_card(current_player)
 
 func createOpponent(playerName: String, location: String) -> Node2D:
 	var opponent = OpponentScene.instantiate()
@@ -70,7 +72,7 @@ func deal_card(player):
 	player.add_child(newCard, true)
 
 func on_Card_click(cardType, cardToRemove):
-	if turnOrder[turn % turnOrder.size()] != $PlayersHand:
+	if current_player != $PlayersHand:
 		return
 	if $PlayersHand.get_child_count() == 1:
 		return
@@ -101,10 +103,10 @@ func next_player():
 				var playersCard = player.find_child("Card*", true, false)
 				playersCard._set_visible(false)
 	turn += 1
+	current_player = turnOrder[(turnOrder.find(current_player) + 1) % turnOrder.size()]
 	dealCard = true
 
 func _process(_delta):
-	var current_player = turnOrder[turn % turnOrder.size()]
 	if deck.size() <= 1 && current_player.find_children("Card*", "Node2D", true, false).size() == 1:
 		var winner = Global.findWinner(turnOrder, true)
 		if winner == $PlayersHand:
@@ -121,7 +123,7 @@ func _process(_delta):
 		return
 
 	if dealCard == true:
-		deal_card(turnOrder[turn % turnOrder.size()])
+		deal_card(current_player)
 		if current_player != $PlayersHand:
 			# Bad AI for Opponent
 			var cards = current_player.find_children("Card*", "Node2D", true, false)
@@ -134,7 +136,7 @@ func _process(_delta):
 			if !playedCard.hover_over_card.is_connected($HUD._on_players_hand_text):
 				playedCard.hover_over_card.connect($HUD._on_players_hand_text)
 			await animate_card_play(playedCard)
-			resolveCard(current_player, playedCard._get_card())
+			await resolveCard(current_player, playedCard._get_card())
 			next_player()
 
 func animate_card_play(card):
