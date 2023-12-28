@@ -74,7 +74,7 @@ func deal_card(player):
 func on_Card_click(cardType, cardToRemove):
 	if current_player != $PlayersHand:
 		return
-	if $PlayersHand.get_child_count() == 1:
+	if $PlayersHand.find_children("Card*", "Node2D", true, false).size() == 1:
 		return
 
 	var otherCard
