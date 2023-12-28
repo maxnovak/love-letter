@@ -45,6 +45,14 @@ offset_bottom = 223.0
 theme_override_font_sizes/font_size = 25
 autowrap_mode = 2
 
+[node name="Restart" type="Button" parent="HUD"]
+visible = false
+offset_left = 593.0
+offset_top = 467.0
+offset_right = 687.0
+offset_bottom = 498.0
+text = "Play again?"
+
 [node name="ViewCardTimer" type="Timer" parent="."]
 wait_time = 1.5
 one_shot = true
@@ -53,3 +61,4 @@ one_shot = true
 position = Vector2(640, 360)
 
 [connection signal="input_event" from="PlayersHand/Area2D" to="PlayersHand" method="_on_area_2d_input_event"]
+[connection signal="pressed" from="HUD/Restart" to="." method="_on_restart_pressed"]

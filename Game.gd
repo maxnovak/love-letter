@@ -6,4 +6,4 @@ func new_game(numberOfPlayers: int):
 	$NewGame.hide()
 	var table = tableScene.instantiate()
 	table.setup(numberOfPlayers)
-	get_tree().root.add_child(table)
+	add_child(table)

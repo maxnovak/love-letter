@@ -118,6 +118,7 @@ func _process(_delta):
 			$HUD.show_instruction("Winner is: You!")
 		else:
 			$HUD.show_instruction("Winner is: %s" % winner.name)
+		$HUD/Restart.show()
 		return
 	elif turnOrder.size() <= 1:
 		var winner = turnOrder[0]
@@ -125,6 +126,7 @@ func _process(_delta):
 			$HUD.show_instruction("Winner is: You!")
 		else:
 			$HUD.show_instruction("Winner is: %s" % winner.name)
+		$HUD/Restart.show()
 		return
 
 	if dealCard == true:
@@ -308,3 +310,7 @@ func getRandomOpponent(player):
 func getRandomCard(cards):
 	cards.shuffle()
 	return cards[0]
+
+func _on_restart_pressed():
+	get_node("/root/Game/NewGame").show()
+	queue_free()
