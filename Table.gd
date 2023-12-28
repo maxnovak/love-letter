@@ -5,6 +5,7 @@ var turn = 0
 var current_player
 var turnOrder := []
 var dealCard = false
+var cannotTarget := []
 
 const CardScene = preload("res://card.tscn")
 const OpponentScene = preload("res://opponent.tscn")
@@ -104,6 +105,9 @@ func next_player():
 				playersCard._set_visible(false)
 	turn += 1
 	current_player = turnOrder[(turnOrder.find(current_player) + 1) % turnOrder.size()]
+	var removeImmunity = cannotTarget.find(current_player)
+	if removeImmunity != -1:
+		cannotTarget.pop_at(removeImmunity)
 	dealCard = true
 
 func _process(_delta):
@@ -154,9 +158,15 @@ func animate_card_play(card):
 	card.position = Vector2(newXCoord,0) # reset local position after re-parenting
 
 func _chooseOpponent(selected):
+	if cannotTarget.has(selected):
+		$HUD.show_instruction("Player is immune from Handmaid")
+		return
 	chooseOpponent.emit(selected)
 
 func _choosePlayer(selected):
+	if cannotTarget.has(selected):
+		$HUD.show_instruction("Player is immune from Handmaid")
+		return
 	choosePlayer.emit(selected)
 
 func resolveCard(player, playedCard):
@@ -164,6 +174,30 @@ func resolveCard(player, playedCard):
 		var playersCard = player.find_child("Card*", true, false)
 		await animate_card_play(playersCard)
 		turnOrder.pop_at(turnOrder.find(player))
+
+	if playedCard == "handmaid":
+		cannotTarget.append(player)
+
+	if playedCard == "prince":
+		var opponent
+		if player == $PlayersHand:
+			$HUD.show_instruction("Choose player")
+			opponent = await choosePlayer
+		else:
+			opponent = turnOrder[randi() % turnOrder.size()-1]
+		if opponent == null:
+				return
+		var opponentsCard = opponent.find_child("Card*", true, false)
+		await animate_card_play(opponentsCard)
+		if opponentsCard._get_card() == "princess":
+			turnOrder.pop_at(turnOrder.find(opponent))
+		else:
+			deal_card(opponent)
+
+	if cannotTarget.size() == turnOrder.size()-1:
+		$HUD.show_instruction("All other players are immune from Handmaid")
+		$ViewCardTimer.start()
+		return
 
 	if playedCard == "king":
 		var opponent
@@ -192,20 +226,6 @@ func resolveCard(player, playedCard):
 		opponent.add_child(playersCardToSwap)
 		$HUD.hide_instruction()
 		$ViewCardTimer.start()
-
-	if playedCard == "prince":
-		var opponent
-		if player == $PlayersHand:
-			$HUD.show_instruction("Choose player")
-			opponent = await choosePlayer
-		else:
-			opponent = turnOrder[randi() % turnOrder.size()-1]
-		var opponentsCard = opponent.find_child("Card*", true, false)
-		await animate_card_play(opponentsCard)
-		if opponentsCard._get_card() == "princess":
-			turnOrder.pop_at(turnOrder.find(opponent))
-		else:
-			deal_card(opponent)
 
 	if playedCard == "baron":
 		var opponent
@@ -282,7 +302,9 @@ func resolveCard(player, playedCard):
 			n.queue_free()
 
 func getRandomOpponent(player):
-	var opponents = turnOrder.filter(func(opp): return opp != player)
+	var opponents = turnOrder.filter(func(opp): return opp != player && !cannotTarget.has(opp))
+	if opponents.size() == 0:
+		return null
 	opponents.shuffle()
 	return opponents[0]
 

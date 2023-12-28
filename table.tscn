@@ -29,7 +29,7 @@ script = ExtResource("3_dgabu")
 offset_left = 430.0
 offset_top = 159.0
 offset_right = 854.0
-offset_bottom = 217.0
+offset_bottom = 244.0
 theme_override_font_sizes/normal_font_size = 25
 
 [node name="CardName" type="RichTextLabel" parent="HUD"]
