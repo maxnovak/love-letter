@@ -103,6 +103,7 @@ func next_player():
 			if player != $PlayersHand:
 				var playersCard = player.find_child("Card*", true, false)
 				playersCard._set_visible(false)
+	$HUD.hide_instruction()
 	turn += 1
 	current_player = turnOrder[(turnOrder.find(current_player) + 1) % turnOrder.size()]
 	var removeImmunity = cannotTarget.find(current_player)
@@ -224,7 +225,6 @@ func resolveCard(player, playedCard):
 		player.add_child(opponentsCard)
 		playersCardToSwap.get_parent().remove_child(playersCardToSwap)
 		opponent.add_child(playersCardToSwap)
-		$HUD.hide_instruction()
 		$ViewCardTimer.start()
 
 	if playedCard == "baron":
@@ -242,7 +242,6 @@ func resolveCard(player, playedCard):
 			playersCard._set_visible(true)
 		var playersComparing = [player, opponent]
 		var winner = Global.findWinner(playersComparing)
-		$HUD.hide_instruction()
 		if winner == null:
 			$ViewCardTimer.start()
 		else:
@@ -261,7 +260,6 @@ func resolveCard(player, playedCard):
 			return #Skipping AI logic mostly so no need to have them look at stuff
 		var opponentsCard = opponent.find_child("Card*", true, false)
 		opponentsCard._set_visible(true)
-		$HUD.hide_instruction()
 		$ViewCardTimer.start()
 
 	if playedCard == "guard":
@@ -296,7 +294,6 @@ func resolveCard(player, playedCard):
 		if cardToGuess == opponentsCard._get_card():
 			await animate_card_play(opponentsCard)
 			turnOrder.pop_at(turnOrder.find(opponent))
-		$HUD.hide_instruction()
 		for n in $GuardDisplay.get_children():
 			$GuardDisplay.remove_child(n)
 			n.queue_free()
