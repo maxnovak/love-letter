@@ -187,9 +187,9 @@ func resolveCard(player, playedCard):
 			$HUD.show_instruction("Choose player")
 			opponent = await choosePlayer
 		else:
-			opponent = turnOrder[randi() % turnOrder.size()-1]
+			opponent = getRandomPlayer()
 		if opponent == null:
-				return
+			return
 		var opponentsCard = opponent.find_child("Card*", true, false)
 		await animate_card_play(opponentsCard)
 		if opponentsCard._get_card() == "princess":
@@ -306,6 +306,10 @@ func getRandomOpponent(player):
 		return null
 	opponents.shuffle()
 	return opponents[0]
+
+func getRandomPlayer():
+	var selectablePlayers = turnOrder.filter(func(play): return !cannotTarget.has(play))
+	return selectablePlayers[randi() % selectablePlayers.size()-1]
 
 func getRandomCard(cards):
 	cards.shuffle()
