@@ -83,7 +83,7 @@ func on_Card_click(cardType, cardToRemove):
 		if card != cardToRemove:
 			otherCard = card
 
-	if otherCard._get_card() == "countess" && \
+	if otherCard.card_type == "countess" && \
 	(cardType == "prince" || cardType == "king"):
 		$HUD.show_instruction("Cannot play card")
 		return
@@ -136,14 +136,14 @@ func _process(_delta):
 			var cards = current_player.find_children("Card*", "Node2D", true, false)
 			var playedCard = cards[0]
 			cards[1].position = Vector2(0,0)
-			if cards[0]._get_card() == "princess":
+			if cards[0].card_type == "princess":
 				playedCard = cards[1]
 				cards[0].position = Vector2(0,0)
 
 			if !playedCard.hover_over_card.is_connected($HUD._on_players_hand_text):
 				playedCard.hover_over_card.connect($HUD._on_players_hand_text)
 			await animate_card_play(playedCard)
-			await resolveCard(current_player, playedCard._get_card())
+			await resolveCard(current_player, playedCard.card_type)
 			next_player()
 
 func animate_card_play(card):
@@ -192,7 +192,7 @@ func resolveCard(player, playedCard):
 			return
 		var opponentsCard = opponent.find_child("Card*", true, false)
 		await animate_card_play(opponentsCard)
-		if opponentsCard._get_card() == "princess":
+		if opponentsCard.card_type == "princess":
 			turnOrder.pop_at(turnOrder.find(opponent))
 		else:
 			deal_card(opponent)
@@ -293,7 +293,7 @@ func resolveCard(player, playedCard):
 			cardToGuess = getRandomCard(cardsToDisplay.keys())
 
 		var opponentsCard = opponent.find_child("Card*", true, false)
-		if cardToGuess == opponentsCard._get_card():
+		if cardToGuess == opponentsCard.card_type:
 			await animate_card_play(opponentsCard)
 			turnOrder.pop_at(turnOrder.find(opponent))
 		for n in $GuardDisplay.get_children():

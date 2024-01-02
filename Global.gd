@@ -68,7 +68,7 @@ func findWinner(players, final = false) -> Node2D:
 		var card = player.find_child("Card*", true, false)
 		if final:
 			card._set_visible(true)
-		playersValues.append(Global.cardBreakdown[card._get_card()].value)
+		playersValues.append(Global.cardBreakdown[card.card_type].value)
 	# if the max and min are the same tis a tie
 	if playersValues[0] == playersValues.max() && playersValues[0] == playersValues.min():
 		return null

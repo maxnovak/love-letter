@@ -1,20 +1,20 @@
 extends Node
 
-signal hover_over_card(cardType)
+signal hover_over_card(card_type)
 signal clicked_card
 
 const pickedSuit = "Clubs"
 const hiddenCard = preload("res://assets/Cards/Backs/back_0.png")
 
-var card: String = "": set = _set_card, get = _get_card
-func _set_card(new_value):
-	card = new_value
-func _get_card():
-		return card
+## Card type determines what happens when this card is played.
+@export
+var card_type: String = ""
 
+## Sets visibility of the card for the player
+@export
 var visible: bool = false: set = _set_visible, get = _get_visible
 func _set_visible(new_value):
-	var path = "res://assets/Cards/Clubs/{cardType}.png".format({"cardType": Global.cardBreakdown[card].assetName})
+	var path = "res://assets/Cards/Clubs/{cardType}.png".format({"cardType": Global.cardBreakdown[card_type].assetName})
 	var visibleCard = load(path)
 	if new_value == true:
 		$Sprite2D.texture = visibleCard
@@ -24,10 +24,10 @@ func _set_visible(new_value):
 func _get_visible():
 	return visible
 
-func setup(cardType: String, visibility: bool, noHover: bool = false):
-	card = cardType
+func setup(type: String, visibility: bool, noHover: bool = false):
+	card_type = type
 	visible = visibility
-	var path = "res://assets/Cards/Clubs/{cardType}.png".format({"cardType": Global.cardBreakdown[cardType].assetName})
+	var path = "res://assets/Cards/Clubs/{cardType}.png".format({"cardType": Global.cardBreakdown[card_type].assetName})
 	var visibleCard = load(path)
 
 	if visible:
@@ -41,11 +41,11 @@ func setup(cardType: String, visibility: bool, noHover: bool = false):
 
 func _on_area_2d_mouse_entered():
 	self.scale = Vector2(5,5)
-	hover_over_card.emit(card)
+	hover_over_card.emit(card_type)
 
 func _on_area_2d_mouse_exited():
 	self.scale = Vector2(3,3)
 
 func _on_area_2d_input_event(_viewport, event, _shape_idx):
 	if (event is InputEventMouseButton && event.pressed):
-		clicked_card.emit(card)
+		clicked_card.emit(card_type)
